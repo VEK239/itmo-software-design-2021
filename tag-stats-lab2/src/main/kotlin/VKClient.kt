@@ -1,3 +1,3 @@
 interface VKClient {
-    fun getStatsPerTagForHours(tag: String, hours: Int, currentTime: Long): List<Int>
+    fun getStatsPerTagForHours(tag: String, hours: Int): List<Int>
 }

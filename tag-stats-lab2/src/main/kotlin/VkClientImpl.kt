@@ -1,6 +1,7 @@
 class VKClientImpl(private val vkService: VKService) : VKClient {
 
-    override fun getStatsPerTagForHours(tag: String, hours: Int, currentTime: Long): List<Int> {
+    override fun getStatsPerTagForHours(tag: String, hours: Int): List<Int> {
+        val currentTime = getCurrentTimeSeconds()
         val dates = vkService.getDatesInPeriod(tag, hours, currentTime)
         return (hours downTo 1).map { getValueInHour(dates, currentTime, it) }
     }
@@ -11,5 +12,4 @@ class VKClientImpl(private val vkService: VKService) : VKClient {
         return dates.filter { it in leftTimeBorder until rightTimeBorder }.size
     }
 
-    private fun hourToSeconds(hour: Int) = hour * 60L * 60
 }

@@ -56,7 +56,5 @@ open class VKServiceImpl(private val apiUrl: String = "https://api.vk.com/method
         return result.sorted()
     }
 
-    private fun hourToSeconds(hour: Int) = hour * 60L * 60
-
     private fun sendRequest(url: String) = URL(url).readText()
 }
