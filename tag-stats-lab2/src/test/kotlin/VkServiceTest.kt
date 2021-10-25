@@ -10,18 +10,14 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 
 class VkServiceTest {
-    private lateinit var vkClientImplForStub: VKClientImpl
-
     companion object {
         private const val PORT = 8888
     }
 
-    private fun transformHoursToSeconds(hours: Long) = hours * 3600
-
     @Test
     fun testServiceForOnePostFound() {
-        val currentTime = System.currentTimeMillis() / 1000
-        val postTime = currentTime - transformHoursToSeconds(1)
+        val currentTime = getCurrentTimeSeconds()
+        val postTime = currentTime - hourToSeconds(1)
         withStubServer(PORT) { s ->
             StubHttp.whenHttp(s)
                 .match(Condition.method(Method.GET), Condition.startsWithUri("/service-one-post"))
@@ -32,7 +28,7 @@ class VkServiceTest {
                                 "items": [
                                   {
                                     "id": 170,
-                                    "date": ${postTime}
+                                    "date": $postTime
                                   }
                                 ],
                                 "total_count": 100
@@ -52,7 +48,7 @@ class VkServiceTest {
 
     @Test
     fun testServiceForNoPostsFound() {
-        val currentTime = System.currentTimeMillis() / 1000
+        val currentTime = getCurrentTimeSeconds()
         withStubServer(PORT) { s ->
             StubHttp.whenHttp(s)
                 .match(Condition.method(Method.GET), Condition.startsWithUri("/service-no-posts"))
@@ -78,7 +74,7 @@ class VkServiceTest {
 
     @Test
     fun testServiceForManyPostsFound() {
-        val currentTime = System.currentTimeMillis() / 1000
+        val currentTime = getCurrentTimeSeconds()
         withStubServer(PORT) { s ->
             StubHttp.whenHttp(s)
                 .match(Condition.method(Method.GET), Condition.startsWithUri("/service-many-posts"))
@@ -89,33 +85,33 @@ class VkServiceTest {
                                 "items": [
                                   {
                                     "id": 1,
-                                    "date": ${currentTime}
+                                    "date": $currentTime
                                   },
                                   {
                                     "id": 2,
-                                    "date": ${currentTime - transformHoursToSeconds(1)}
+                                    "date": ${currentTime - hourToSeconds(1)}
                                   },
                                   {
                                     "id": 3,
-                                    "date": ${currentTime - transformHoursToSeconds(3)}
+                                    "date": ${currentTime - hourToSeconds(3)}
                                   },
                                   {
                                     "id": 4,
-                                    "date": ${currentTime - transformHoursToSeconds(2)}
+                                    "date": ${currentTime - hourToSeconds(2)}
                                   },
                                   {
                                     "id": 5,
-                                    "date": ${currentTime - transformHoursToSeconds(2)}
+                                    "date": ${currentTime - hourToSeconds(2)}
                                   }
                                 ],
                                 "total_count": 100
                               }
                             }""".format(
                             currentTime,
-                            currentTime - transformHoursToSeconds(1),
-                            currentTime - transformHoursToSeconds(2),
-                            currentTime - transformHoursToSeconds(2),
-                            currentTime - transformHoursToSeconds(3),
+                            currentTime - hourToSeconds(1),
+                            currentTime - hourToSeconds(2),
+                            currentTime - hourToSeconds(2),
+                            currentTime - hourToSeconds(3),
                         )
                     )
                 )
@@ -127,10 +123,10 @@ class VkServiceTest {
             Assert.assertEquals(5, res.size)
             Assert.assertArrayEquals(
                 longArrayOf(
-                    currentTime - transformHoursToSeconds(3),
-                    currentTime - transformHoursToSeconds(2),
-                    currentTime - transformHoursToSeconds(2),
-                    currentTime - transformHoursToSeconds(1),
+                    currentTime - hourToSeconds(3),
+                    currentTime - hourToSeconds(2),
+                    currentTime - hourToSeconds(2),
+                    currentTime - hourToSeconds(1),
                     currentTime
                 ), res.toLongArray()
             )

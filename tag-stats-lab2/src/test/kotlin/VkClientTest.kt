@@ -1,3 +1,8 @@
+import com.xebialabs.restito.builder.stub.StubHttp
+import com.xebialabs.restito.semantics.Action
+import com.xebialabs.restito.semantics.Condition
+import com.xebialabs.restito.server.StubServer
+import org.glassfish.grizzly.http.Method
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -6,6 +11,10 @@ import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 
 class VkClientTest {
+    companion object {
+        private const val PORT = 8888
+    }
+
     private lateinit var vkClientImpl: VKClientImpl
 
     @Mock
@@ -58,4 +67,62 @@ class VkClientTest {
         Assert.assertArrayEquals(intArrayOf(1, 2, 2), result.toIntArray())
     }
 
+    @Test
+    fun testServiceAndClientForManyPostsFound() {
+        val currentTime = getCurrentTimeSeconds()
+        withStubServer(PORT) { s ->
+            StubHttp.whenHttp(s)
+                .match(Condition.method(Method.GET), Condition.startsWithUri("/service-many-posts"))
+                .then(
+                    Action.stringContent(
+                        """{
+                              "response": {
+                                "items": [
+                                  {
+                                    "id": 1,
+                                    "date": $currentTime
+                                  },
+                                  {
+                                    "id": 2,
+                                    "date": ${currentTime - hourToSeconds(1)}
+                                  },
+                                  {
+                                    "id": 3,
+                                    "date": ${currentTime - hourToSeconds(3)}
+                                  },
+                                  {
+                                    "id": 4,
+                                    "date": ${currentTime - hourToSeconds(2)}
+                                  }
+                                ],
+                                "total_count": 100
+                              }
+                            }""".format(
+                            currentTime - 0.5 * hourToSeconds(1),
+                            currentTime - 1.5 * hourToSeconds(1),
+                            currentTime - 2.5 * hourToSeconds(1)
+                        )
+                    )
+                )
+            val path = "http://localhost:$PORT/service-many-posts"
+
+            val client = VKClientImpl(VKServiceImpl(path))
+
+            val res = client.getStatsPerTagForHours("tag", 4)
+            Assert.assertEquals(4, res.size)
+            Assert.assertArrayEquals(
+                intArrayOf(0, 1, 1, 1), res.toIntArray()
+            )
+        }
+    }
+
+    private fun withStubServer(port: Int, callback: (StubServer?) -> Unit) {
+        var stubServer: StubServer? = null
+        try {
+            stubServer = StubServer(port).run()
+            callback(stubServer)
+        } finally {
+            stubServer?.stop()
+        }
+    }
 }
