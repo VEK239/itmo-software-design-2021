@@ -7,8 +7,10 @@ import ru.akirakozov.sd.refactoring.servlet.AddProductServlet;
 import ru.akirakozov.sd.refactoring.servlet.GetProductsServlet;
 import ru.akirakozov.sd.refactoring.servlet.QueryServlet;
 
+import javax.servlet.Servlet;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -16,6 +18,12 @@ import java.sql.Statement;
  */
 public class Main {
     public static void main(String[] args) throws Exception {
+        checkConnection();
+        Server server = startServer(8081);
+        server.join();
+    }
+
+    private static void checkConnection() throws SQLException {
         try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
             String sql = "CREATE TABLE IF NOT EXISTS PRODUCT" +
                     "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
@@ -26,18 +34,24 @@ public class Main {
             stmt.executeUpdate(sql);
             stmt.close();
         }
+    }
 
-        Server server = new Server(8081);
+    private static Server startServer(int port) throws Exception {
+        Server server = new Server(port);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
 
-        context.addServlet(new ServletHolder(new AddProductServlet()), "/add-product");
-        context.addServlet(new ServletHolder(new GetProductsServlet()),"/get-products");
-        context.addServlet(new ServletHolder(new QueryServlet()),"/query");
+        addServletToContext(context, new AddProductServlet(), "/add-product");
+        addServletToContext(context, new GetProductsServlet(), "/get-products");
+        addServletToContext(context, new QueryServlet(), "/query");
 
         server.start();
-        server.join();
+        return server;
+    }
+
+    private static void addServletToContext(ServletContextHandler context, Servlet servlet, String path) {
+        context.addServlet(new ServletHolder(servlet), path);
     }
 }
