@@ -1,0 +1,58 @@
+.boxes {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    font-size: 18px;
+    justify-content: space-between;
+}
+
+.left-part{
+    margin-left: 0;
+    flex-grow: 3;
+}
+
+.rigth-part{
+    flex-grow: 1;
+}
+
+.input-box-style {
+    margin: 5px auto 10px;
+    width: 45%;
+}
+
+.input-select-box-style {
+    margin: 15px auto 5px;
+    width: 80%;
+}
+
+.category-list {
+    border: 2px solid dimgrey;
+    padding: 4px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.partition {
+    flex: auto;
+    margin-bottom: 30px;
+}
+
+.category-input-field {
+    margin-left: 10px;
+}
+
+a {
+    font: 14px Arial;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
+}

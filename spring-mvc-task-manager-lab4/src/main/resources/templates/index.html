@@ -1,0 +1,61 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<head>
+    <link th:href="@{styles/index.css}" rel="stylesheet"/>
+    <title>Task Manager</title>
+</head>
+<body>
+<div class="boxes">
+    <div class="left-part">
+        <div class="partition">
+            <h3 class="boxes">All Lists</h3>
+            <th:block th:each="list : ${lists}">
+                <div class="category-list">
+                    <h4 th:text="${list.description}"></h4>
+                    <a th:href="@{'/deleteList/' + ${list.id}}">DeleteList</a>
+                    <table>
+                        <tr th:each="item : ${list.items}">
+                            <td th:if="${item.isDone == false}" th:text="${item.description}"></td>
+                            <td th:if="${item.isDone == true}">
+                                <del th:text="${item.description}"></del>
+                            </td>
+                            <td>
+                                <a th:href="@{'/done/' + ${item.listId} + '/' + ${item.id}}"
+                                   th:if="${item.isDone == false}">Done</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </th:block>
+        </div>
+    </div>
+    <div class="rigth-part">
+        <div class="partition">
+            <h3 class="instruction">Add New category In Task Manager</h3>
+            <form class="instruction" action="/add-list" method="POST" th:object="${listDto}">
+                <div class="input-box">
+                    <input class="input-box-style" placeholder="enter list name" th:field="*{description}" type="text"/>
+                </div>
+                <input type="submit" value="Add">
+            </form>
+        </div>
+        <div class="partition">
+            <h3>Add New Task</h3>
+            <form action="/add-item" method="POST" th:object="${itemDto}">
+                <div class="input-box">
+
+                    <input class="input-box-style" placeholder="enter task description" th:field="*{description}"
+                           type="text"/>
+                    <select class="input-select-box-style" th:field="*{listId}">
+                        <option th:each="i : ${lists}" th:selected="${i.id==0}" th:text="${i.description}"
+                                th:value="${i.id}"></option>
+                    </select>
+                </div>
+                <input type="submit" value="Add">
+            </form>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
