@@ -1,0 +1,27 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+
+apply plugin: 'org.openjfx.javafxplugin'
+
+group 'com.vlasova.bridge'
+version '0.1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+javafx {
+    version = '11.0.2'
+    modules = [ 'javafx.controls']
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
