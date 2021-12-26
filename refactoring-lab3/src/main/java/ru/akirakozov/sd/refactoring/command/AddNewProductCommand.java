@@ -43,8 +43,8 @@ public class AddNewProductCommand extends DatabaseCommand<Product> {
     }
 
     public AddNewProductCommand(Product toCreate) {
+        super("INSERT INTO PRODUCT " +
+                "(NAME, PRICE) VALUES (?, ?)");
         this.toCreate = toCreate;
-        sqlStatement = "INSERT INTO PRODUCT " +
-                "(NAME, PRICE) VALUES (?, ?)";
     }
 }
