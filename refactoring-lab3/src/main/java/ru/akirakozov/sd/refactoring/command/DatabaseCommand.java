@@ -1,9 +1,9 @@
 package ru.akirakozov.sd.refactoring.command;
 
-abstract class DatabaseCommand<T> implements Command<T> {
-    final String sqlStatement;
+public abstract class DatabaseCommand<T> implements Command<T> {
+    protected final String sqlStatement;
 
-    DatabaseCommand(String sqlStatement) {
+    public DatabaseCommand(String sqlStatement) {
         this.sqlStatement = sqlStatement;
     }
 }
