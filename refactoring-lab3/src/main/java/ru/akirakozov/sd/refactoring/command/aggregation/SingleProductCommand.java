@@ -18,11 +18,12 @@ public abstract class SingleProductCommand extends DatabaseCommand<Product> {
         try (Connection c = Database.getConnection();
              Statement stmt = c.createStatement()) {
             Product p = new Product();
-            ResultSet rs = stmt.executeQuery(sqlStatement);
-            p.name = rs.getString("name");
-            p.price = rs.getInt("price");
-            p.id = rs.getInt("id");
-            return p;
+            try (ResultSet rs = stmt.executeQuery(sqlStatement)) {
+                p.name = rs.getString("name");
+                p.price = rs.getInt("price");
+                p.id = rs.getInt("id");
+                return p;
+            }
         }
     }
 }

@@ -17,9 +17,9 @@ public class GetProductsCountCommand extends DatabaseCommand<Integer> {
     public Integer execute() throws Exception {
         try (Connection c = Database.getConnection();
              Statement stmt = c.createStatement()) {
-
-            ResultSet rs = stmt.executeQuery(sqlStatement);
-            return rs.getInt(1);
+            try (ResultSet rs = stmt.executeQuery(sqlStatement)) {
+                return rs.getInt(1);
+            }
         }
     }
 }

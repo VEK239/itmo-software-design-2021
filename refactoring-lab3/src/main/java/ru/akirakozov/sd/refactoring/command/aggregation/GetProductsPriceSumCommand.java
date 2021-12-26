@@ -17,8 +17,9 @@ public class GetProductsPriceSumCommand extends DatabaseCommand<Integer> {
         try (Connection c = Database.getConnection();
              Statement stmt = c.createStatement()) {
 
-            ResultSet rs = stmt.executeQuery(sqlStatement);
-            return rs.getInt(1);
+            try (ResultSet rs = stmt.executeQuery(sqlStatement)) {
+                return rs.getInt(1);
+            }
         }
     }
 }
