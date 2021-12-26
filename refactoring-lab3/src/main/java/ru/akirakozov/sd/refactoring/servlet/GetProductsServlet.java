@@ -3,6 +3,7 @@ package ru.akirakozov.sd.refactoring.servlet;
 import ru.akirakozov.sd.refactoring.command.GetCommand;
 import ru.akirakozov.sd.refactoring.database.Database;
 import ru.akirakozov.sd.refactoring.model.Product;
+import ru.akirakozov.sd.refactoring.servlet.html.HtmlBuilder;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,19 +22,16 @@ public class GetProductsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+        HtmlBuilder hb = new HtmlBuilder();
         try {
             List<Product> products = new GetCommand().execute();
-            response.getWriter().println("<html><body>");
-
             for (Product p : products) {
-                response.getWriter().println(p.name + "\t" + p.price + "</br>");
+                hb.addLine(p.name + "\t" + p.price);
             }
-            response.getWriter().println("</body></html>");
+            response.getWriter().println(hb.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
     }
 }

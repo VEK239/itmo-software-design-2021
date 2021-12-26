@@ -4,6 +4,7 @@ import ru.akirakozov.sd.refactoring.command.AddNewProductCommand;
 import ru.akirakozov.sd.refactoring.database.Database;
 import ru.akirakozov.sd.refactoring.exceptions.BadModelException;
 import ru.akirakozov.sd.refactoring.model.Product;
+import ru.akirakozov.sd.refactoring.servlet.html.HtmlBuilder;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,13 +27,10 @@ public class AddProductServlet extends HttpServlet {
 
         try {
             p = new AddNewProductCommand(p).execute();
-            response.setContentType("text/html");
             response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().println(p.toString());
-        } catch (BadModelException e) {
-            response.setContentType("text/html");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().println(e.getMessage());
+            response.getWriter().println("OK");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
