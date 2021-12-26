@@ -47,7 +47,6 @@ public class GetProductsServletTest {
         for (int i = 0; i < names.length; i++) {
             DatabaseUtils.add(names[i], prices[i]);
         }
-        when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
         servlet.doGet(request, response);
         String result = stringWriter.getBuffer().toString();
